@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin:0;
+    height:100vh;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(-45deg,#ff758c,#ff4d6d,#ff8fa3,#ff7eb3);
+    background-size:400% 400%;
+    animation:gradientMove 10s ease infinite;
+    color:white;
+    transition:transform 4s ease;
+}
+
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+.zoom{ transform:scale(1.15); }
+
+.card{
+    backdrop-filter:blur(15px);
+    background:rgba(255,255,255,0.15);
+    padding:40px;
+    border-radius:25px;
+    text-align:center;
+    width:90%;
+    max-width:420px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.3);
+    z-index:5;
+}
+
+h1{ font-size:2.2em; }
+
+.love-text{
+    font-family:'Great Vibes',cursive;
+    font-size:3em;
+}
+
+.profile-img{
+    width:180px;
+    height:180px;
+    object-fit:cover;
+    border-radius:50%;
+    border:5px solid white;
+    box-shadow:0 0 40px white;
+    position:relative;
+    z-index:6;
+}
+
+.buttons{ position:relative;height:120px; }
+
+button{
+    padding:14px 34px;
+    border:none;
+    border-radius:40px;
+    font-weight:600;
+    cursor:pointer;
+    position:absolute;
+}
+
+#yesBtn{
+    background:white;
+    color:#ff4d6d;
+    left:50%;
+    transform:translateX(-130%);
+}
+
+#noBtn{
+    background:#ff4d6d;
+    color:white;
+    left:50%;
+    transform:translateX(20%);
+}
+
+/* Ring */
+.ring{
+    font-size:80px;
+    animation:ringPop 1.5s ease forwards;
+}
+@keyframes ringPop{
+0%{transform:scale(0);}
+70%{transform:scale(1.3);}
+100%{transform:scale(1);}
+}
+
+/* Sparkle */
+.sparkle{
+    position:fixed;
+    width:6px;
+    height:6px;
+    background:white;
+    border-radius:50%;
+    pointer-events:none;
+    animation:sparkFade 1s linear forwards;
+}
+@keyframes sparkFade{
+to{opacity:0;transform:scale(2);}
+}
+
+/* Rose petals */
+.petal{
+    position:fixed;
+    top:-20px;
+    font-size:20px;
+    animation:fall linear forwards;
+}
+@keyframes fall{
+to{ transform:translateY(110vh) rotate(360deg); }
+}
+
+/* Heart explosion */
+.heart-blast{
+    position:absolute;
+    font-size:25px;
+    animation:blast 1s ease-out forwards;
+}
+@keyframes blast{
+to{
+    transform:translate(var(--x),var(--y)) scale(0);
+    opacity:0;
+}
+}
+
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+}
+
+#success{ display:none; }
+
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" loop>
+    <source src="ohmylove.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="fireworks"></canvas>
+
+<div class="card" id="card">
+    <h1>Will you be my Valentine, Anna? ❤️</h1>
+    <div class="buttons">
+        <button id="yesBtn" onclick="yesAnswer()">Yes 💕</button>
+        <button id="noBtn" onmouseover="moveNo()">No 😢</button>
+    </div>
+</div>
+
+<div class="card" id="success">
+    <div class="ring">💍</div>
+    <div class="love-text">ich liebe dich mein Muki ❤️</div>
+    <img src="me.jpg" class="profile-img" id="photo">
+</div>
+
+<script>
+
+/* Fullscreen first click */
+document.body.addEventListener("click",()=>{
+    if(document.documentElement.requestFullscreen){
+        document.documentElement.requestFullscreen();
+    }
+},{once:true});
+
+/* Music fade in */
+function playMusic(){
+    const music=document.getElementById("bgMusic");
+    music.volume=0;
+    music.play();
+    let fade=setInterval(()=>{
+        if(music.volume<1){
+            music.volume+=0.02;
+        } else clearInterval(fade);
+    },200);
+}
+
+/* NO escape */
+function moveNo(){
+    const no=document.getElementById("noBtn");
+    const box=document.querySelector(".buttons");
+    no.style.left=Math.random()*(box.offsetWidth-no.offsetWidth)+"px";
+    no.style.top=Math.random()*(box.offsetHeight-no.offsetHeight)+"px";
+}
+
+/* YES */
+function yesAnswer(){
+    document.getElementById("card").style.display="none";
+    document.getElementById("success").style.display="block";
+    document.body.classList.add("zoom");
+    playMusic();
+    startFireworks();
+    heartExplosion();
+}
+
+/* Sparkle trail */
+document.addEventListener("mousemove",e=>{
+    const s=document.createElement("div");
+    s.className="sparkle";
+    s.style.left=e.pageX+"px";
+    s.style.top=e.pageY+"px";
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),1000);
+});
+
+/* Rose petals */
+setInterval(()=>{
+    const p=document.createElement("div");
+    p.className="petal";
+    p.innerHTML="🌹";
+    p.style.left=Math.random()*100+"vw";
+    p.style.animationDuration=(5+Math.random()*5)+"s";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),10000);
+},500);
+
+/* Heart explosion */
+function heartExplosion(){
+    const photo=document.getElementById("photo");
+    const rect=photo.getBoundingClientRect();
+    for(let i=0;i<25;i++){
+        const h=document.createElement("div");
+        h.className="heart-blast";
+        h.innerHTML="❤️";
+        h.style.left=rect.left+rect.width/2+"px";
+        h.style.top=rect.top+rect.height/2+"px";
+        h.style.setProperty("--x",(Math.random()*200-100)+"px");
+        h.style.setProperty("--y",(Math.random()*200-100)+"px");
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),1000);
+    }
+}
+
+/* Fireworks */
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+function startFireworks(){
+    for(let i=0;i<5;i++){
+        setTimeout(()=>createFirework(),i*800);
+    }
+}
+
+function createFirework(){
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height/2;
+    const colors=["#ff4d6d","#ffffff","#ffd700","#ff8fa3"];
+    for(let i=0;i<60;i++){
+        const angle=Math.random()*2*Math.PI;
+        const speed=Math.random()*5;
+        const vx=Math.cos(angle)*speed;
+        const vy=Math.sin(angle)*speed;
+        const color=colors[Math.floor(Math.random()*colors.length)];
+        animateParticle(x,y,vx,vy,color);
+    }
+}
+
+function animateParticle(x,y,vx,vy,color){
+    let life=60;
+    function draw(){
+        if(life<=0)return;
+        ctx.fillStyle=color;
+        ctx.fillRect(x,y,3,3);
+        x+=vx;
+        y+=vy;
+        vy+=0.05;
+        life--;
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+</script>
+</body>
+</html>
